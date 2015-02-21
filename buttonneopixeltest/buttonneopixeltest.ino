@@ -1,6 +1,6 @@
 #include <Adafruit_NeoPixel.h>
 
-#define PIN 6
+#define PIN 5
 
 // Parameter 1 = number of pixels in strip
 // Parameter 2 = Arduino pin number (most are valid)
@@ -20,11 +20,11 @@ const int buttonPin = 2;     // the number of the pushbutton pin
 const int ledPin =  13;      // the number of the LED pin
 const int buzzpin = 3;
 
-int buttonState = HIGH;   
+int buttonState = HIGH;  // current reading from the button
 int activityLevel = 6;
 
-int reading;           // the current reading from the input pin
 int previous = HIGH;    // the previous reading from the input pin
+int state = HIGH;
 
 // the follow variables are long's because the time, measured in miliseconds,
 // will quickly become a bigger number than can be stored in an int.
@@ -50,48 +50,41 @@ void loop()
 {
   buttonState = digitalRead(buttonPin);
 
-  if (buttonState == LOW) 
-  {     
-    // turn LED on:    
-    digitalWrite(ledPin, HIGH);  
-    digitalWrite(buzzpin, HIGH);  
-
-    for (int i = 0 ; i < activityLevel; i++)
-    {
-      strip.setPixelColor(i, strip.Color(0,127,0));
-    }  
-    for (int i = activityLevel ; i < strip.numPixels(); i++)
-    {
-      strip.setPixelColor(i, strip.Color(0,0,0));  
-    }
-    
-    strip.show();
-    
-    //activityLevel = (activityLevel + 1) % 12;  
-  } 
-  else 
-  {
-    // turn LED off:
-    digitalWrite(ledPin, LOW); 
-    digitalWrite(buzzpin, LOW); 
-    
-    for (int i = 0 ; i < strip.numPixels(); i++)
-    {
-      strip.setPixelColor(i, strip.Color(0,0,0));
-    }
-    strip.show();
-    
-    //activityLevel = 0;
-  }
-  
   // debounce + toggle
-  if (reading == HIGH && previous == LOW && millis() - time > debounce) 
+  if (buttonState == HIGH && previous == LOW && millis() - time > debounce) 
   {
-    if (buttonState == HIGH)
+    if (state == HIGH)
     {
+          // turn LED on:    
+      digitalWrite(ledPin, HIGH);  
+      digitalWrite(buzzpin, HIGH);  
+
+      for (int i = 0 ; i < activityLevel; i++)
+      {
+        strip.setPixelColor(i, strip.Color(0,127,0));
+      }  
+      for (int i = activityLevel ; i < strip.numPixels(); i++)
+      {
+        strip.setPixelColor(i, strip.Color(0,0,0));  
+      }
+    
+      strip.show();
+      
+      state = LOW; // toggle
     }
     else
     {
+      // turn LED off:
+      digitalWrite(ledPin, LOW); 
+      digitalWrite(buzzpin, LOW); 
+    
+      for (int i = 0 ; i < strip.numPixels(); i++)
+      {
+         strip.setPixelColor(i, strip.Color(0,0,0));
+       }
+        strip.show();
+    
+      state = HIGH; // toggle
     }
 
     time = millis();    
@@ -99,24 +92,3 @@ void loop()
   
   previous = buttonState;
 }
-
-
-/*
-  reading = digitalRead(inPin);
-
-  // if the input just went from LOW and HIGH and we've waited long enough
-  // to ignore any noise on the circuit, toggle the output pin and remember
-  // the time
-  if (reading == HIGH && previous == LOW && millis() - time > debounce) {
-    if (state == HIGH)
-      state = LOW;
-    else
-      state = HIGH;
-
-    time = millis();    
-  }
-
-  digitalWrite(outPin, state);
-
-  previous = reading;
-  */

@@ -35,67 +35,37 @@ void loop() {
 
   length = Serial.readBytes(buffer, 2);    
 
-  for (int p = 0; p < 12; p++)
-    strip.setPixelColor(p, strip.Color(30,100,30) );
-  strip.show();
 
   if ( length > 0 )
   {
-    /*for (int i = 0; i < length - 1; i += 2 )
-    {
-      // Check if button1 has been pressed or released...
-      if ( buffer[i] == button1 )
-      {
-        // If the button is held down, buffer[i+1] will be 0
-        // If it's released, buffer[i+1] is 1
-        // Set pin 0 to 1 when the button is held down
-        // and to 0 when released        
-        Bean.setLed(255 * (1-buffer[i+1]), 0, 0);        
-      }
-      else if ( buffer[i] == button2 )
-      {
-        Bean.setLed(0, 255* (1-buffer[i+1]), 0); 
-      }
-      else if ( buffer[i] == button3 )
-      {
-        Bean.setLed(0, 0, 255 * (1-buffer[i+1]));
-      }
-      else if ( buffer[i] == slider29)
-      {
-        Bean.setLed(buffer[i+1], 0, 0);
-        /*
-        for(uint16_t h=0; i<strip.numPixels(); h++) {
-          strip.setPixelColor(h, buffer[i+1], 0,0);
-        }
-        strip.show();        
-       /
-       
-       //strip.setPixelColor(5, strip.Color(255,0,0) );
-       //strip.show();
-       
-      }
-    }*/
-    
     byte controlbyte = buffer [0];
     byte data = buffer[1];
-    
-    
-    switch (controlbyte){
+    int r,g,b,activity;   
+ 
+    switch (controlbyte)
+    {
       case button1:
+        r = 1 - data;
         Bean.setLed(255 * (1-data), 0, 0); 
         break;
       case button2:
+        g = 1 - data;
         Bean.setLed(0, 255 * (1-data), 0); 
         break;
-    
-    
-    
+      case button3:
+        b = 1 - data;
+        Bean.setLed(0, 0, 255 * (1-data)); 
+        break;
+      case slider29:
+        activity = data;
+        Bean.setLed(0, 255 * (1-data), 0); 
+        break;
     }
-    
-    
+
+    for (int p = 0; p < 12; p++)
+        strip.setPixelColor(p, strip.Color(r,g,b) );
+    strip.show();
   }
-  
+
   //Bean.sleep(500);
 }
-
-

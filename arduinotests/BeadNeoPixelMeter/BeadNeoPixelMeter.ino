@@ -22,7 +22,7 @@ void setup() {
   strip.begin();
   //strip.adjustBrightness(40);
   strip.show(); // Initialize all pixels to 'off'
-  pinMode(9, OUTPUT);
+  pinMode(0, OUTPUT);
 }
 
 void loop() {
@@ -33,13 +33,13 @@ void loop() {
     for (int i = 0; i < 12; i++)
       strip.setPixelColor(i, strip.Color(0,0,0) );
     strip.show();
-    digitalWrite(9, HIGH);
+    digitalWrite(0, HIGH);
     delay(1000);
 
   }
   else
   {
-  digitalWrite(9,LOW);
+  digitalWrite(0,LOW);
   // Some example procedures showing how to display to the pixels:
   for (int i = 0; i < 12; i++)
   {

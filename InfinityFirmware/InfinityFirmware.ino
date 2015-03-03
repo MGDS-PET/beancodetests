@@ -32,11 +32,7 @@ int activityLevel = 6;
 
 int previous = HIGH;    // the previous reading from the input pin
 int toggleState = HIGH;
-
-// the follow variables are long's because the time, measured in miliseconds,
-// will quickly become a bigger number than can be stored in an int.
-long time = 0;         // the last time the output pin was toggled
-long debounce = 200;   // the debounce time, increase if the output flickers
+int partyOn = LOW; // are we currently partying? 
 
 void setup() 
 {
@@ -98,15 +94,15 @@ void loop() {
     strip.show();
   }
 
-  Bean.sleep(100);
+  Bean.sleep(1000);
 }
 
 void party()
 {
   
+    partyOn = HIGH; 
     Bean.setLed(100,100,100);
     int buzzState = LOW;
-    
     
     for(int i = 0; i < 12; i++)
     {
@@ -119,6 +115,8 @@ void party()
     
     digitalWrite(0, LOW);
     Bean.setLed(0,0,0);
+
+    partyOn = LOW; 
 }
 
 void togglelights()
@@ -127,9 +125,7 @@ void togglelights()
   Serial.println(time);
   Serial.println(toggleState);
 
-  // debounce + toggle
-  // if (buttonState == HIGH && previous == LOW && millis() - time > debounce) 
-  if (buttonState == LOW && (millis() - time) > debounce) 
+  if (buttonState == LOW && partOn == LOW) // fixed issue with bean.sleep and millis() 
   {
     if (toggleState == HIGH)
     {
@@ -144,11 +140,8 @@ void togglelights()
         strip.setPixelColor(i, strip.Color(0,0,0));  
       }
       
-      Serial.println("yyy");
-
-      //strip.show();
-      
       //toggleState = LOW; 
+      //Serial.println("yyy");
     }
     else
     {
@@ -158,17 +151,12 @@ void togglelights()
       {
          strip.setPixelColor(i, strip.Color(0,0,0));
        }
-        //strip.show();
     
       //toggleState = HIGH; 
-      Serial.println("XXXXXX");
-
+      //Serial.println("XXXXXX");
     }
     
     toggleState = !toggleState;
     strip.show(); 
-    
-    time = millis();    
   }
-  
 }
